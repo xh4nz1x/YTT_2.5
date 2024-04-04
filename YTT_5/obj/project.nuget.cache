@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZraSWqJ/zKdsY64Mu7iKzmSmj/fwvwR5/LZ8VFyUzuMYIBQ5EONQZGaeEs2XHaOzyfOS84RuozJ2A2RIVR3xKA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\h4nz1\\RiderProjects\\YTT_5\\YTT_5\\YTT_5.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\h4nz1\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\h4nz1\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\h4nz1\\.nuget\\packages\\npgsql\\8.0.2\\npgsql.8.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
