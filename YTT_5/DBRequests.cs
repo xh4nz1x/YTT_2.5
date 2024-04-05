@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace YTT_5_1;
+namespace YTT_5;
 
 public class DBRequests
 {
@@ -25,15 +25,27 @@ public class DBRequests
                        "INNER JOIN driver dr on driver_rights_category.id_driver = dr.id " +
                        "INNER JOIN rights_category rc on rc.id = driver_rights_category.id_rights_category " +
                        $"WHERE dr.id = {driver};";
-        using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
-        using var reader = cmd.ExecuteReader();
-
-        Console.WriteLine("----------");
-        while (reader.Read())
+        
+        
+        string checkIdDriver = $"SELECT EXISTS(SELECT * FROM driver WHERE id = {driver})";
+        using var cmdCheckDriver = new NpgsqlCommand(checkIdDriver, DBService.GetSqlConnection());
+        if ((bool)cmdCheckDriver.ExecuteScalar())
         {
-            Console.WriteLine($"Имя: {reader[0]} | Фамилия: {reader[1]} | Категория прав: {reader[2]}");
+            using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
+            using var reader = cmd.ExecuteReader();
+            Console.WriteLine("----------");
+            while (reader.Read())
+            {
+                Console.WriteLine($"Имя: {reader[0]} | Фамилия: {reader[1]} | Категория прав: {reader[2]}");
+            }
+            Console.WriteLine("----------");
         }
-        Console.WriteLine("----------");
+        else
+        {
+            Console.WriteLine("----------");
+            Console.WriteLine("Ошибка: Данного водителя не существует!");
+            Console.WriteLine("----------");
+        }
     }
     
     public static void GetDriverQuery()
@@ -117,9 +129,32 @@ public class DBRequests
     public static void AddDriverRightsCategoryQuery(int driver, int rightsCategory)
     {
         var querySql = $"INSERT INTO driver_rights_category(id_driver, id_rights_category) VALUES ({driver}, {rightsCategory})";
-        using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
-        cmd.ExecuteNonQuery();
-        Console.WriteLine($"\n -----> Категория прав водителя успешна добавлена!");
+        string checkRightsCategory = $"SELECT EXISTS(SELECT * FROM rights_category WHERE id = {rightsCategory})";
+        using var cmdCheckRightsCategory = new NpgsqlCommand(checkRightsCategory, DBService.GetSqlConnection());
+        if ((bool)cmdCheckRightsCategory.ExecuteScalar())
+        {
+            string checkIdDriver = $"SELECT EXISTS(SELECT * FROM driver WHERE id = {driver})";
+            using var cmdCheckDriver = new NpgsqlCommand(checkIdDriver, DBService.GetSqlConnection());
+            if ((bool)cmdCheckDriver.ExecuteScalar())
+            {
+                using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
+                cmd.ExecuteNonQuery();
+                Console.WriteLine($"\n -----> Категория прав водителя успешна добавлена!");
+            }
+            else
+            {
+                Console.WriteLine("----------");
+                Console.WriteLine("Ошибка: Данного водителя не существует!");
+                Console.WriteLine("----------");
+            }
+        }
+        else
+        {
+            Console.WriteLine("----------");
+            Console.WriteLine("Ошибка: Категория прав не существует!");
+            Console.WriteLine("----------");
+        }
+        
     }
 
     public static void AddTypeCarQuery(string name)
@@ -141,17 +176,63 @@ public class DBRequests
     public static void AddRouteQuery (int idDriver, int idCar, int idItinerary, int numberPassengers)
     {
         var querySql = $"INSERT INTO route(id_driver, id_car, id_itinerary, number_passengers) VALUES ('{idDriver}', '{idCar}', '{idItinerary}', '{numberPassengers}')";
-        using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
-        cmd.ExecuteNonQuery();
-        Console.WriteLine($"\n -----> Рейс успешно добавлен!");
+
+        string checkIdDriver = $"SELECT EXISTS(SELECT * FROM driver WHERE id = {idDriver})";
+        using var cmdCheckIdDriver = new NpgsqlCommand(checkIdDriver, DBService.GetSqlConnection());
+        if ((bool)cmdCheckIdDriver.ExecuteScalar())
+        {
+            string checkIdCar = $"SELECT EXISTS(SELECT * FROM car WHERE id = {idCar})";
+            using var cmdCheckIdCar = new NpgsqlCommand(checkIdCar, DBService.GetSqlConnection());
+            if ((bool)cmdCheckIdCar.ExecuteScalar())
+            {
+                string checkIdItinerary = $"SELECT EXISTS(SELECT * FROM itinerary WHERE id = {idItinerary})";
+                using var cmdCheckIdItinerary = new NpgsqlCommand(checkIdItinerary, DBService.GetSqlConnection());
+                if ((bool)cmdCheckIdItinerary.ExecuteScalar())
+                {
+                    using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine($"\n -----> Рейс успешно добавлен!");
+                }
+                else
+                {
+                    Console.WriteLine("----------");
+                    Console.WriteLine("Ошибка: Данного маршрута не существует!");
+                    Console.WriteLine("----------");
+                }
+            }
+            else
+            {
+                Console.WriteLine("----------");
+                Console.WriteLine("Ошибка: Данной машины не существует!");
+                Console.WriteLine("----------");
+            }
+        }
+        else
+        {
+            Console.WriteLine("----------");
+            Console.WriteLine("Ошибка: Данного водителя не существует!");
+            Console.WriteLine("----------");
+        }
     }
     
     public static void AddCarQuery(int idCar, string nameCar, string stateNumber, int numberPassengers)
     {
         var querySql = $"INSERT INTO car(id_type_car, name, state_number, number_passengers) VALUES ('{idCar}', '{nameCar}', '{stateNumber}', '{numberPassengers}')";
-        using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
-        cmd.ExecuteNonQuery();
-        Console.WriteLine($"\n -----> Машина '{nameCar}' успешно добавлена!");
+
+        string checkIdCar = $"SELECT EXISTS(SELECT * FROM car WHERE id = {idCar})";
+        using var cmdCheckIdCar = new NpgsqlCommand(checkIdCar, DBService.GetSqlConnection());
+        if ((bool)cmdCheckIdCar.ExecuteScalar())
+        {
+            using var cmd = new NpgsqlCommand(querySql, DBService.GetSqlConnection());
+            cmd.ExecuteNonQuery();
+            Console.WriteLine($"\n -----> Машина '{nameCar}' успешно добавлена!");
+        }
+        else
+        {
+            Console.WriteLine("----------");
+            Console.WriteLine("Ошибка: Данного типа машины не существует!");
+            Console.WriteLine("----------");
+        }
     }
     
     public static void AddItineraryQuery(string name)
