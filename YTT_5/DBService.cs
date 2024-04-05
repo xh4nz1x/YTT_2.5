@@ -8,7 +8,7 @@ public class DBService
     
     private static string GetConnectionString()
     {
-        return @"Host=10.30.0.137;Port=5432;Database=gr624_cheaan;Username=gr624_cheaan;Password=Litokop_908";
+        return @"Host=46.17.97.92;Port=5432;Database=h4nz1;Username=h4nz1;Password=password";
     }
     
     public static NpgsqlConnection GetSqlConnection()
